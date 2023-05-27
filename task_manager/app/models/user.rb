@@ -15,6 +15,10 @@ class User < ApplicationRecord
 
   validates_acceptance_of :terms
 
+  
+
+  
+
   scope :sorted, -> { order(:last_name, :first_name) }
 
   def full_name

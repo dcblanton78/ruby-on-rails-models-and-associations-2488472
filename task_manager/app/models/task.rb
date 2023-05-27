@@ -12,7 +12,7 @@ class Task < ApplicationRecord
   validates_presence_of :position
   validates_numericality_of :position, greater_than: 0
 
-  validate :description_has_no_prohibited_words
+  
 
   before_validation :titleize_name, unless: :skip_titleize_name
   before_validation :set_default_position,
@@ -20,6 +20,7 @@ class Task < ApplicationRecord
   before_create :log_create
   before_update :log_update
   after_save :log_save
+
   after_commit :cleaning_reminder, if: :too_many_records?
 
   scope :complete, -> { where(completed: true) }
@@ -27,25 +28,18 @@ class Task < ApplicationRecord
   scope :sorted, -> { order(:position) }
   scope :search, -> (kw) { where("LOWER(name) LIKE ?", "%#{kw.downcase}%")}
 
-  private
-
-    def description_has_no_prohibited_words
-      return unless description.present?
-      prohibited_words = ['later', 'eventually', 'someday']
-      prohibited_words.each do |word|
-        if description.include?(word)
-          errors.add(:description, "cannot contain prohibited word: #{word}")
-        end
-      end
-    end
+ 
 
     def titleize_name
       self.name = name.titleize
     end
 
     def set_default_position
-			max = Task.maximum(:position) || 0
-			self.position = max + 1
+      
+
+        max = Task.maximum(:position) || 0
+        self.position = max + 1
+      
 		end
 
     def log_create
